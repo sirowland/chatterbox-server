@@ -117,3 +117,12 @@ describe('Node Server Request Listener Function', function() {
   });
 
 });
+
+//TEST 1
+//IF STORAGE PERSISTS OR NOT
+
+//TEST 2
+//(maybe live server), return a 403 if they dont have right key
+
+//TEST 3
+//return 405 if method not allowed;

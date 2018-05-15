@@ -29,9 +29,7 @@ var requestHandler = function(request, response) {
   var headers = defaultCorsHeaders;
   headers['Content-Type'] = 'text/plain';
   
-  if (request.url === '/classes/messages' && request.method === 'GET') {
-
-  } else if (request.url === '/classes/messages' && request.method === 'POST') {
+  if (request.url === '/classes/messages' && request.method === 'POST') {
    
     var body = '';
     request.on('data', (chunk) => {
@@ -46,8 +44,6 @@ var requestHandler = function(request, response) {
       storage.push(body);
     
       idCount++;
-
-      console.log('current storage', storage);
     });
 
     statusCode = 201;
