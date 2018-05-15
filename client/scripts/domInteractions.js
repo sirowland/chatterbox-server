@@ -16,7 +16,11 @@ $(document).ready(function() {
   //SUBMIT BUTTON
   $('#send').on('click', function(event) {
     //access app.send with a message
-    var roomname = $('#addRoom')[0].value || $("#roomSelect :selected").text().trim()
+    console.log($('#addRoom'));
+
+    var addroom = $('#addRoom')[0];
+
+    var roomname = addroom ? $('#addRoom')[0].value : $("#roomSelect :selected").text().trim();
     
     var message = {
       username: app.username,

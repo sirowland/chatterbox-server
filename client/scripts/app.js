@@ -38,6 +38,8 @@ var app = {
       type: 'GET',
       contentType: 'application/json',
       success: function (data) {
+        data = JSON.parse(data);
+
         if (app.messages.length === 0) {
           app.messages = data.results.reverse();
           

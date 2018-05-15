@@ -11,6 +11,8 @@ this file and include it in basic-server.js so that it actually works.
 *Hint* Check out the node module documentation at http://nodejs.org/api/modules.html.
 
 **************************************************************/
+var storage = [];
+var idCount = 0;
 
 var requestHandler = function(request, response) {
   // Request and Response come from node's http module.
@@ -21,8 +23,6 @@ var requestHandler = function(request, response) {
   //
   // Documentation for both request and response can be found in the HTTP section at
   // http://nodejs.org/documentation/api/
-
-  var storage = [];
  
   // console.log('Serving request type ' + req.method + ' for url ' + req.url);
   var statusCode = 200;
@@ -39,9 +39,19 @@ var requestHandler = function(request, response) {
     });
 
     request.on('end', () => {
-      storage.push(JSON.parse(body));
-      // console.log('current storage', storage);
+
+      body = JSON.parse(body);
+      body['objectId'] = idCount;
+
+      storage.push(body);
+    
+      idCount++;
+
+      console.log('current storage', storage);
     });
+
+    statusCode = 201;
+
   } else if (request.url !== '/classes/messages') {
     response.writeHead(404, headers);
     response.end();
