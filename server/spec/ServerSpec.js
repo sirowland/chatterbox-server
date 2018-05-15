@@ -77,8 +77,8 @@ describe('Node Server Request Listener Function', function() {
 
   it('Should respond with messages that were previously posted', function() {
     var stubMsg = {
-      username: 'Jono',
-      text: 'Do my bidding!'
+      username: 'Onoj',
+      text: 'Eating food!'
     };
     var req = new stubs.request('/classes/messages', 'POST', stubMsg);
     var res = new stubs.response();
@@ -101,6 +101,37 @@ describe('Node Server Request Listener Function', function() {
     expect(res._ended).to.equal(true);
   });
 
+  it('Should have persistent storage while connection is open', function() {
+    // // Now if we request the log for that room the message we posted should be there:
+    req = new stubs.request('/classes/messages', 'GET');
+    res = new stubs.response();
+
+    handler.requestHandler(req, res);
+
+    expect(res._responseCode).to.equal(200);
+    var messages = JSON.parse(res._data).results;
+    expect(messages.length).to.be.equal(2);
+    expect(messages[0].username).to.equal('Jono');
+    expect(messages[1].username).to.equal('Onoj');
+    expect(messages[0].text).to.equal('Do my bidding!');
+    expect(messages[1].text).to.equal('Eating food!');
+    expect(res._ended).to.equal(true);
+  });
+
+  it('Should have all fields', function() {
+    // // Now if we request the log for that room the message we posted should be there:
+    req = new stubs.request('/classes/messages', 'GET');
+    res = new stubs.response();
+
+    handler.requestHandler(req, res);
+
+    expect(res._responseCode).to.equal(200);
+    var messages = JSON.parse(res._data).results;
+    expect(messages[0].username).to.exist;
+    expect(messages[0].text).to.exist;
+    expect(messages[0].objectId).to.exist;
+    expect(res._ended).to.equal(true);
+  });
 
   it('Should 404 when asked for a nonexistent file', function() {
     var req = new stubs.request('/arglebargle', 'GET');
@@ -116,13 +147,21 @@ describe('Node Server Request Listener Function', function() {
       });
   });
 
-});
+  it('Should 405 when using a illegal method', function() {
+    var req = new stubs.request('/classes/messages', 'PUT');
+    var res = new stubs.response();
 
-//TEST 1
-//IF STORAGE PERSISTS OR NOT
+    handler.requestHandler(req, res);
+
+    // Wait for response to return and then check status code
+    waitForThen(
+      function() { return res._ended; },
+      function() {
+        expect(res._responseCode).to.equal(405);
+      });
+  });
+
+});
 
 //TEST 2
 //(maybe live server), return a 403 if they dont have right key
-
-//TEST 3
-//return 405 if method not allowed;

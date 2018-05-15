@@ -11,6 +11,8 @@ this file and include it in basic-server.js so that it actually works.
 *Hint* Check out the node module documentation at http://nodejs.org/api/modules.html.
 
 **************************************************************/
+
+var fs = require('fs');
 var storage = [];
 var idCount = 0;
 
@@ -28,7 +30,7 @@ var requestHandler = function(request, response) {
   var statusCode = 200;
   var headers = defaultCorsHeaders;
   headers['Content-Type'] = 'text/plain';
-  
+
   if (request.url === '/classes/messages' && request.method === 'POST') {
    
     var body = '';
@@ -48,8 +50,12 @@ var requestHandler = function(request, response) {
 
     statusCode = 201;
 
-  } else if (request.url !== '/classes/messages') {
+  }else if (request.url !== '/classes/messages') {
     response.writeHead(404, headers);
+    response.end();
+
+  } else if (request.method !== 'GET' && request.method !== 'POST' && request.method !== 'OPTIONS') {
+    response.writeHead(405, headers);
     response.end();
   }
 
@@ -63,6 +69,16 @@ var requestHandler = function(request, response) {
   response.writeHead(statusCode, headers);
 
   response.end(JSON.stringify(responseBody));
+
+
+//  else if (request.url === "/index") {
+//     fs.readFile('../../client/index.html', function (err, data) {
+//       response.writeHead(200, {'Content-Type': 'text/html'})
+//       response.write(data);
+//       response.end();
+//     });
+//   } 
+
 
   // Do some basic logging.
   //
