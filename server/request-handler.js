@@ -15,6 +15,11 @@ this file and include it in basic-server.js so that it actually works.
 var fs = require('fs');
 var storage = [];
 var idCount = 0;
+var file = '';
+var css = '';
+var app = '';
+var dom = '';
+var _ = '';
 
 var requestHandler = function(request, response) {
   // Request and Response come from node's http module.
@@ -44,13 +49,91 @@ var requestHandler = function(request, response) {
       body['objectId'] = idCount;
 
       storage.push(body);
-    
+      console.log('inside top: ',file);
       idCount++;
     });
 
     statusCode = 201;
 
-  }else if (request.url !== '/classes/messages') {
+  } else if (request.url === "/index")  {
+    fs.readFile('../client/index.html', 'utf8', function (err, data) {
+      if (err) {
+        throw err;
+      } else {
+        response.writeHead(200, {'Content-Type': 'text/html'})
+        response.write(data, function(err) {
+          file = data;
+          response.end(file);
+        });
+      }
+    });
+  } else if(request.url.indexOf('.css') !== -1){
+    fs.readFile('../client/styles/styles.css', 'utf8', function (err, data) {
+      if (err) {
+        throw err;
+      } else {
+        response.writeHead(200, {'Content-Type': 'text/css'})
+        response.write(data, function(err) {
+          css = data;
+          response.end(css);
+        });
+      }
+    });
+  } else if(request.url.indexOf('app.js') !== -1){
+    fs.readFile('../client/scripts/app.js', 'utf8', function (err, data) {
+      if (err) {
+        throw err;
+      } else {
+        response.writeHead(200, {'Content-Type': 'text/javascript'})
+        response.write(data, function(err) {
+          app = data;
+          response.end(app);
+        });
+      }
+    });
+  } else if(request.url.indexOf('dom') !== -1){
+    fs.readFile('../client/scripts/domInteractions.js', 'utf8', function (err, data) {
+      if (err) {
+        throw err;
+      } else {
+        response.writeHead(200, {'Content-Type': 'text/javascript'})
+        response.write(data, function(err) {
+          dom = data;
+          response.end(dom);
+        });
+      }
+    });
+  } else if(request.url.indexOf('jquery.js') !== -1){
+    fs.readFile('../client/bower_components/jquery/dist/jquery.min.js', 'utf8', function (err, data) {
+      if (err) {
+        throw err;
+      } else {
+        response.writeHead(200, {'Content-Type': 'text/javascript'})
+        response.write(data, function(err) {
+          jquery = data;
+          response.end(jquery);
+        });
+      }
+    });
+  } else if(request.url.indexOf('underscore') !== -1){
+    fs.readFile('../client/bower_components/underscore/underscore-min.js', 'utf8', function (err, data) {
+      if (err) {
+        throw err;
+      } else {
+        response.writeHead(200, {'Content-Type': 'text/javascript'})
+        response.write(data, function(err) {
+          _ = data;
+          response.end(_);
+        });
+      }
+    });
+  }
+  
+  
+  else if (request.url.substring(0,6) === "/index") {
+    response.end(file);
+
+  } else if (request.url !== '/classes/messages') {
     response.writeHead(404, headers);
     response.end();
 
@@ -59,25 +142,17 @@ var requestHandler = function(request, response) {
     response.end();
   }
 
-  var responseBody = { 
-    method: request.method,
-    url: request.url,
-    body: body,
-    results: storage
-  };
+  // var responseBody = { 
+  //   method: request.method,
+  //   url: request.url,
+  //   body: body,
+  //   results: storage
+  // };
 
-  response.writeHead(statusCode, headers);
-
-  response.end(JSON.stringify(responseBody));
+  // response.writeHead(statusCode, headers);
 
 
-//  else if (request.url === "/index") {
-//     fs.readFile('../../client/index.html', function (err, data) {
-//       response.writeHead(200, {'Content-Type': 'text/html'})
-//       response.write(data);
-//       response.end();
-//     });
-//   } 
+  // response.end(JSON.stringify(responseBody));
 
 
   // Do some basic logging.
