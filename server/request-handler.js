@@ -15,7 +15,6 @@ this file and include it in basic-server.js so that it actually works.
 var fs = require('fs');
 var storage = [];
 var idCount = 0;
-var file = '';
 var css = '';
 var app = '';
 var dom = '';
@@ -49,24 +48,12 @@ var requestHandler = function(request, response) {
       body['objectId'] = idCount;
 
       storage.push(body);
-      console.log('inside top: ',file);
+
       idCount++;
     });
 
     statusCode = 201;
 
-  } else if (request.url === "/index")  {
-    fs.readFile('../client/index.html', 'utf8', function (err, data) {
-      if (err) {
-        throw err;
-      } else {
-        response.writeHead(200, {'Content-Type': 'text/html'})
-        response.write(data, function(err) {
-          file = data;
-          response.end(file);
-        });
-      }
-    });
   } else if(request.url.indexOf('.css') !== -1){
     fs.readFile('../client/styles/styles.css', 'utf8', function (err, data) {
       if (err) {
@@ -127,10 +114,19 @@ var requestHandler = function(request, response) {
         });
       }
     });
-  }
-  
-  
-  else if (request.url.substring(0,6) === "/index") {
+   } else if (request.url === "/index")  {
+    fs.readFile('../client/index.html', 'utf8', function (err, data) {
+      if (err) {
+        throw err;
+      } else {
+        response.writeHead(200, {'Content-Type': 'text/html'})
+        response.write(data, function(err) {
+          file = data;
+          response.end(file);
+        });
+      }
+    });
+  } else if (request.url.substring(0,6) === "/index") {
     response.end(file);
 
   } else if (request.url !== '/classes/messages') {
